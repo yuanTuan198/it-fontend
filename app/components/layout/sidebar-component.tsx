@@ -11,7 +11,8 @@ import {
   Settings,
   Users,
   Wrench,
-  Wallpaper
+  Wallpaper,
+  WifiOff
 } from "lucide-react";
 import { useState } from "react";
 import { Link } from "react-router";
@@ -60,8 +61,8 @@ export const SidebarComponent = ({
     {
       title: "Tool Boost",
       href: `/toolbooots`,
-      icon: CheckCircle2,
-      status:false 
+      icon: WifiOff,
+      status:true 
     },
     {
       title: "Lưu trữ",

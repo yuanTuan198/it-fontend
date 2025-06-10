@@ -39,29 +39,33 @@ const SignIn = () => {
       password: "",
     },
   });
+
   const { mutate, isPending } = useLoginMutation();
 
   const handleOnSubmit = (values: SigninFormData) => {
-    mutate(values, {
+    const formattedEmail = values.email.endsWith("@gmail.com")
+      ? values.email
+      : `${values.email}@gmail.com`;
+
+    mutate({ ...values, email: formattedEmail }, {
       onSuccess: (data) => {
         login(data);
-        console.log(data);
         toast.success("Login successful");
         navigate("/my-tasks");
       },
       onError: (error: any) => {
         const errorMessage =
           error.response?.data?.message || "An error occurred";
-        console.log(error);
         toast.error(errorMessage);
       },
     });
   };
+
   return (
     <div className="min-h-screen flex flex-col items-center justify-center bg-muted/40 p-4">
       <Card className="max-w-md w-full shadow-xl">
         <CardHeader className="text-center mb-5">
-          <CardTitle className="text-2xl font-bold">Welcome back</CardTitle>
+          <CardTitle className="text-2xl font-bold">IT PRS</CardTitle>
           <CardDescription className="text-sm text-muted-foreground">
             Sign in to your account to continue
           </CardDescription>
@@ -79,11 +83,19 @@ const SignIn = () => {
                   <FormItem>
                     <FormLabel>Email Address</FormLabel>
                     <FormControl>
-                      <Input
-                        type="email"
-                        placeholder="email@example.com"
-                        {...field}
-                      />
+                      <div className="flex items-center border rounded-md px-3 py-2 bg-white">
+                        <input
+                          type="text"
+                          placeholder="yourname"
+                          className="outline-none flex-1 bg-transparent"
+                          value={field.value.replace(/@gmail\.com$/, "")}
+                          onChange={(e) => {
+                            const input = e.target.value.replace(/@gmail\.com$/, "");
+                            field.onChange(input + "@gmail.com");
+                          }}
+                        />
+                        <span className="text-muted-foreground text-sm">@gmail.com</span>
+                      </div>
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -114,19 +126,19 @@ const SignIn = () => {
                   </FormItem>
                 )}
               />
-
               <Button type="submit" className="w-full" disabled={isPending}>
-                {isPending ? <Loader2 className="w-4 h-4 mr-2" /> : "Sign in"}
+                {isPending ? (
+                  <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                ) : (
+                  "Sign in"
+                )}
               </Button>
             </form>
           </Form>
-
           <CardFooter className="flex items-center justify-center mt-6">
-            <div className="flex items-center justify-center">
-              <p className="text-sm text-muted-foreground">
-                Don&apos;t have an account? <Link to="/sign-up">Sign up</Link>
-              </p>
-            </div>
+            <p className="text-sm text-muted-foreground">
+              Don&apos;t have an account? <Link to="/sign-up">Sign up</Link>
+            </p>
           </CardFooter>
         </CardContent>
       </Card>
