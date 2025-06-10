@@ -52,9 +52,7 @@ export const Header = ({
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
 
-          {
-            user?._id == "68468c63640b367b4dabb4ff" ? (
-              <Button variant={"outline"}>
+          <Button variant={"outline"}>
               {selectedWorkspace ? (
                 <>
                   {selectedWorkspace.color && (
@@ -66,15 +64,11 @@ export const Header = ({
                   <span className="font-medium">{selectedWorkspace?.name}</span>
                 </>
               ) : (
-                <span className="font-medium">Tạo Dự Án </span>
+                <span className="font-medium">Workspaces </span>
               )}
             </Button>
-            ) : <div></div>
-          }
 
-            
           </DropdownMenuTrigger>
-
           <DropdownMenuContent>
             <DropdownMenuLabel>Workspace</DropdownMenuLabel>
             <DropdownMenuSeparator />
@@ -94,10 +88,15 @@ export const Header = ({
             </DropdownMenuGroup>
 
             <DropdownMenuGroup>
-              <DropdownMenuItem onClick={onCreateWorkspace}>
+              {
+                user?._id == "68468c63640b367b4dabb4ff" ? ( 
+                  <DropdownMenuItem onClick={onCreateWorkspace}>
                 <PlusCircle className="w-4 h-4 mr-2" />
                 Create Workspace
               </DropdownMenuItem>
+                    ): null
+              }
+              
             </DropdownMenuGroup>
           </DropdownMenuContent>
         </DropdownMenu>

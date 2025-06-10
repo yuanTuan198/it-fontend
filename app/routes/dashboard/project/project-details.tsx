@@ -11,10 +11,12 @@ import { UseProjectQuery } from "@/hooks/use-project";
 import { getProjectProgress } from "@/lib";
 import { cn } from "@/lib/utils";
 import type { Project, Task, TaskStatus } from "@/types";
-import { format } from "date-fns";
 import { AlertCircle, Calendar, CheckCircle, Clock } from "lucide-react";
 import { useState } from "react";
 import { useNavigate, useParams } from "react-router";
+import { Link } from "react-router";
+import { format, formatDistanceToNow } from "date-fns";
+import { vi } from "date-fns/locale";
 
 const ProjectDetails = () => {
   const { projectId, workspaceId } = useParams<{
@@ -44,6 +46,7 @@ const ProjectDetails = () => {
   const { project, tasks } = data;
   const projectProgress = getProjectProgress(tasks);
 
+
   const handleTaskClick = (taskId: string) => {
     navigate(
       `/workspaces/${workspaceId}/projects/${projectId}/tasks/${taskId}`
@@ -52,9 +55,11 @@ const ProjectDetails = () => {
 
   return (
     <div className="space-y-8">
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-        <div>
           <BackButton />
+
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+
+        <div>
           <div className="flex items-center gap-3">
             <h1 className="text-xl md:text-2xl font-bold">{project.title}</h1>
           </div>
@@ -83,9 +88,8 @@ const ProjectDetails = () => {
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
             <TabsList>
               <TabsTrigger value="all" onClick={() => setTaskFilter("All")}>
-                Tất cả phiếu
+                Tất cả
               </TabsTrigger>
-              
               <TabsTrigger value="todo" onClick={() => setTaskFilter("To Do")}>
                 Mới
               </TabsTrigger>
@@ -100,81 +104,53 @@ const ProjectDetails = () => {
               </TabsTrigger>
             </TabsList>
 
-            <div className="flex items-center text-sm">
-              <span className="text-muted-foreground">Trạng thái:</span>
-              <div>
-                <Badge variant="outline" className="bg-background">
-                  {tasks.filter((task) => task.status === "To Do").length} Mới
-                </Badge>
-                <Badge variant="outline" className="bg-background">
-                  {tasks.filter((task) => task.status === "In Progress").length}{" "}
-                  Đang tiến hành
-                </Badge>
-                <Badge variant="outline" className="bg-background">
-                  {tasks.filter((task) => task.status === "Done").length} Hàn thành
-                </Badge>
-              </div>
+            <div className="flex items-center text-sm gap-2">
+              <Badge variant="outline" className="bg-background">
+                {tasks.filter((task) => task.status === "To Do").length} Mới
+              </Badge>
+              <Badge variant="outline" className="bg-background">
+                {tasks.filter((task) => task.status === "In Progress").length} Đang tiến hành
+              </Badge>
+              <Badge variant="outline" className="bg-background">
+                {tasks.filter((task) => task.status === "Done").length} Hoàn thành
+              </Badge>
             </div>
           </div>
 
-          <TabsContent value="all" className="m-0">
-            <div className="grid grid-cols-3 gap-4">
-              <TaskColumn
-                title="Mới"
-                tasks={tasks.filter((task) => task.status === "To Do")}
-                onTaskClick={handleTaskClick}
-              />
-
-              <TaskColumn
-                title="Đang tiến hành"
-                tasks={tasks.filter((task) => task.status === "In Progress")}
-                onTaskClick={handleTaskClick}
-              />
-
-              <TaskColumn
-                title="Hoàn thành"
-                tasks={tasks.filter((task) => task.status === "Done")}
-                onTaskClick={handleTaskClick}
-              />
-            </div>
+          <TabsContent value="all" className="m-0 space-y-8">
+            <TaskColumn
+              title="Tất cả"
+              tasks={tasks}
+              onTaskClick={handleTaskClick}
+            />
           </TabsContent>
 
           <TabsContent value="todo" className="m-0">
-            <div className="grid md:grid-cols-1 gap-4">
-              <TaskColumn
-                title="To Do"
-                tasks={tasks.filter((task) => task.status === "To Do")}
-                onTaskClick={handleTaskClick}
-                isFullWidth
-              />
-            </div>
+            <TaskColumn
+              title="Mới"
+              tasks={tasks.filter((task) => task.status === "To Do")}
+              onTaskClick={handleTaskClick}
+            />
           </TabsContent>
 
           <TabsContent value="in-progress" className="m-0">
-            <div className="grid md:grid-cols-1 gap-4">
-              <TaskColumn
-                title="In Progress"
-                tasks={tasks.filter((task) => task.status === "In Progress")}
-                onTaskClick={handleTaskClick}
-                isFullWidth
-              />
-            </div>
+            <TaskColumn
+              title="Đang tiến hành"
+              tasks={tasks.filter((task) => task.status === "In Progress")}
+              onTaskClick={handleTaskClick}
+            />
           </TabsContent>
 
           <TabsContent value="done" className="m-0">
-            <div className="grid md:grid-cols-1 gap-4">
-              <TaskColumn
-                title="Done"
-                tasks={tasks.filter((task) => task.status === "Done")}
-                onTaskClick={handleTaskClick}
-                isFullWidth
-              />
-            </div>
+            <TaskColumn
+              title="Hoàn thành"
+              tasks={tasks.filter((task) => task.status === "Done")}
+              onTaskClick={handleTaskClick}
+            />
           </TabsContent>
         </Tabs>
       </div>
 
-      {/* create    task dialog */}
       <CreateTaskDialog
         open={isCreateTask}
         onOpenChange={setIsCreateTask}
@@ -191,56 +167,30 @@ interface TaskColumnProps {
   title: string;
   tasks: Task[];
   onTaskClick: (taskId: string) => void;
-  isFullWidth?: boolean;
 }
 
-const TaskColumn = ({
-  title,
-  tasks,
-  onTaskClick,
-  isFullWidth = false,
-}: TaskColumnProps) => {
+const TaskColumn = ({ title, tasks, onTaskClick }: TaskColumnProps) => {
   return (
-    <div
-      className={
-        isFullWidth
-          ? "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"
-          : ""
-      }
-    >
-      <div
-        className={cn(
-          "space-y-4",
-          !isFullWidth ? "h-full" : "col-span-full mb-4"
-        )}
-      >
-        {!isFullWidth && (
-          <div className="flex items-center justify-between">
-            <h1 className="font-medium">{title}</h1>
-            <Badge variant="outline">{tasks.length}</Badge>
-          </div>
-        )}
+    <div className="space-y-4">
+      <div className="flex items-center justify-between">
+        <h1 className="font-medium">{title}</h1>
+        <Badge variant="outline">{tasks.length}</Badge>
+      </div>
 
-        <div
-          className={cn(
-            "space-y-3",
-            isFullWidth && "grid grid-cols-2 lg:grid-cols-3 gap-4"
-          )}
-        >
-          {tasks.length === 0 ? (
-            <div className="text-center text-sm text-muted-foreground">
-              No tasks yet
-            </div>
-          ) : (
-            tasks.map((task) => (
-              <TaskCard
-                key={task._id}
-                task={task}
-                onClick={() => onTaskClick(task._id)}
-              />
-            ))
-          )}
-        </div>
+      <div className="space-y-3">
+        {tasks.length === 0 ? (
+          <div className="text-center text-sm text-muted-foreground">
+            Chưa có phiếu công việc
+          </div>
+        ) : (
+          tasks.map((task) => (
+            <TaskCard
+              key={task._id}
+              task={task}
+              onClick={() => onTaskClick(task._id)}
+            />
+          ))
+        )}
       </div>
     </div>
   );
@@ -252,78 +202,102 @@ const TaskCard = ({ task, onClick }: { task: Task; onClick: () => void }) => {
       onClick={onClick}
       className="cursor-pointer hover:shadow-md transition-all duration-300 hover:translate-y-1"
     >
-      <CardHeader>
+      {/* <CardHeader>
         <div className="flex items-center justify-between">
-          <Badge
-            className={
-              task.priority === "High"
-                ? "bg-red-500 text-white"
-                : task.priority === "Medium"
-                ? "bg-orange-500 text-white"
-                : "bg-slate-500 text-white"
-            }
-          >
-            {task.priority}
-          </Badge>
+         
 
           <div className="flex gap-1">
             {task.status !== "To Do" && (
               <Button
-                variant={"ghost"}
-                size={"icon"}
+                variant="ghost"
+                size="icon"
                 className="size-6"
-                onClick={() => {
+                onClick={(e) => {
+                  e.stopPropagation();
                   console.log("mark as to do");
                 }}
                 title="Mark as To Do"
               >
-                <AlertCircle className={cn("size-4")} />
+                <AlertCircle className="size-4" />
                 <span className="sr-only">Mark as To Do</span>
               </Button>
             )}
             {task.status !== "In Progress" && (
               <Button
-                variant={"ghost"}
-                size={"icon"}
+                variant="ghost"
+                size="icon"
                 className="size-6"
-                onClick={() => {
+                onClick={(e) => {
+                  e.stopPropagation();
                   console.log("mark as in progress");
                 }}
                 title="Mark as In Progress"
               >
-                <Clock className={cn("size-4")} />
+                <Clock className="size-4" />
                 <span className="sr-only">Mark as In Progress</span>
               </Button>
             )}
             {task.status !== "Done" && (
               <Button
-                variant={"ghost"}
-                size={"icon"}
+                variant="ghost"
+                size="icon"
                 className="size-6"
-                onClick={() => {
+                onClick={(e) => {
+                  e.stopPropagation();
                   console.log("mark as done");
                 }}
                 title="Mark as Done"
               >
-                <CheckCircle className={cn("size-4")} />
+                <CheckCircle className="size-4" />
                 <span className="sr-only">Mark as Done</span>
               </Button>
             )}
           </div>
         </div>
-      </CardHeader>
+      </CardHeader> */}
 
       <CardContent>
-        <h4 className="ont-medium mb-2">{task.title}</h4>
-
-        {task.description && (
-          <p className="text-sm text-muted-foreground line-clamp-2 mb-2">
-            {task.description}
-          </p>
-        )}
-
-        <div className="flex items-center justify-between text-sm">
-          <div className="flex items-center gap-2">
+                      <Link to={`/workspaces/${task.project.workspace}/projects/${task.project._id}/tasks/${task._id}`} className="block space-y-1">
+                        <h3 className="font-medium truncate">{task.title}</h3>
+                        <p className="text-sm text-muted-foreground line-clamp-2">{task.description || "Không có mô tả"}</p>
+                        <div className="flex flex-wrap gap-2 text-sm">
+                          <Badge
+                            className={
+                              task.status === "Done"
+                                ? "bg-cyan-600 text-white"
+                                : task.status === "In Progress"
+                                ? "bg-teal-600 text-white"
+                                : "bg-green-500 text-white"
+                            }
+                          >
+                            {task.status === "Done"
+                              ? "Hoàn thành"
+                              : task.status === "In Progress"
+                              ? "Đang tiến hành"
+                              : "Mới"}
+                          </Badge>
+                          {task.priority && (
+                            <Badge
+                              className={
+                                task.priority === "High"
+                                  ? "bg-red-500 text-white"
+                                  : task.priority === "Medium"
+                                  ? "bg-yellow-400 text-black"
+                                  : "bg-teal-500 text-white"
+                              }
+                            >
+                              {task.priority === "High"
+                                ? "Cao"
+                                : task.priority === "Medium"
+                                ? "Trung bình"
+                                : "Thấp"}
+                            </Badge>
+                          )}
+                          {task.dueDate && (
+                            <span className="text-muted-foreground"> {formatDistanceToNow(new Date(task.createdAt), { addSuffix: true, locale: vi })}</span>
+                          )}
+                        </div>
+                              {/* <div className="flex items-center gap-2">
             {task.assignees && task.assignees.length > 0 && (
               <div className="flex -space-x-2">
                 {task.assignees.slice(0, 5).map((member) => (
@@ -344,22 +318,8 @@ const TaskCard = ({ task, onClick }: { task: Task; onClick: () => void }) => {
                 )}
               </div>
             )}
-          </div>
-
-          {task.dueDate && (
-            <div className="text-xs text-muted-foreground flex items-center">
-              <Calendar className="size-3 mr-1" />
-              {format(new Date(task.dueDate), "MMM d, yyyy")}
-            </div>
-          )}
-        </div>
-        {/* 5/10 subtasks */}
-        {task.subtasks && task.subtasks.length > 0 && (
-          <div className="mt-2 text-xs text-muted-foreground">
-            {task.subtasks.filter((subtask) => subtask.completed).length} /{" "}
-            {task.subtasks.length} subtasks
-          </div>
-        )}
+          </div> */}
+                      </Link>
       </CardContent>
     </Card>
   );

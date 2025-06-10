@@ -32,7 +32,6 @@ export const WorkspaceHeader = ({
   "border-yellow-500",
   "border-purple-500"
 ]
-console.log(user?._id == "68468c63640b367b4dabb4ff")
   return (
     <div className="space-y-8">
       <div className="space-y-3">

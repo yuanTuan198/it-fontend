@@ -29,6 +29,7 @@
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "date-fns": "^4.1.0",
+    "file-saver": "^2.0.5",
     "isbot": "^5.1.27",
     "lucide-react": "^0.511.0",
     "react": "^19.1.0",
@@ -39,6 +40,7 @@
     "recharts": "^2.15.3",
     "sonner": "^2.0.3",
     "tailwind-merge": "^3.3.0",
+    "xlsx": "^0.18.5",
     "zod": "^3.25.28"
   },
   "devDependencies": {

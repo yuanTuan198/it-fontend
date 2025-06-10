@@ -56,16 +56,17 @@ const Members = () => {
     isLoading: boolean;
   };
 
-  if (isLoading)
+
+
+  if (!data || !workspaceId) return <div>Hãy chọn workspace để xem thành viên</div>;
+
+    if (isLoading)
     return (
       <div>
         <Loader />
       </div>
     );
 
-  console.log(data);
-
-  if (!data || !workspaceId) return <div>No workspace found</div>;
 
   const filteredMembers = data?.members?.filter(
     (member) =>
@@ -73,6 +74,8 @@ const Members = () => {
       member.user.email.toLowerCase().includes(search.toLowerCase()) ||
       member.role?.toLowerCase().includes(search.toLowerCase())
   );
+
+  console.log(filteredMembers);
 
   return (
     <div className="space-y-6">

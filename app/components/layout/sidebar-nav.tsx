@@ -9,6 +9,7 @@ interface SidebarNavProps extends React.HtmlHTMLAttributes<HTMLElement> {
     title: string;
     href: string;
     icon: LucideIcon;
+    status: boolean
   }[];
   isCollapsed: boolean;
   currentWorkspace: Workspace | null;
@@ -44,6 +45,7 @@ export const SidebarNav = ({
           <Button
             key={el.href}
             variant={isActive ? "outline" : "ghost"}
+            disabled={el.status}
             className={cn(
               "justify-start",
               isActive && "bg-blue-800/20 text-blue-600 font-medium"

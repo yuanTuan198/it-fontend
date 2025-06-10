@@ -11,6 +11,7 @@ import {
   Settings,
   Users,
   Wrench,
+  Wallpaper
 } from "lucide-react";
 import { useState } from "react";
 import { Link } from "react-router";
@@ -33,29 +34,40 @@ export const SidebarComponent = ({
     //   icon: LayoutDashboard,
     // },
      {
-      title: "My Tasks",
+      title: "Phiếu",
       href: "/my-tasks",
       icon: ListCheck,
+      status:false
     },
     {
       title: "Workspaces",
       href: "/workspaces",
       icon: Users,
+      status:false
     },
     {
-      title: "Members",
+      title: "Thành viên",
       href: `/members`,
       icon: Users,
+      status:false
     },
     {
-      title: "Achieved",
+      title: "Quản lý thiết bị",
+      href: `/devices`,
+      icon: Wallpaper,
+      status:false
+    },
+    {
+      title: "Lưu trữ",
       href: `/achieved`,
       icon: CheckCircle2,
+      status:true 
     },
     {
       title: "Settings",
       href: "/settings",
       icon: Settings,
+      status:true
     },
   ];
 
@@ -72,7 +84,7 @@ export const SidebarComponent = ({
             <div className="flex items-center gap-2">
               <Wrench className="size-6 text-blue-600" />
               <span className="font-semibold text-lg hidden md:block">
-                IT-Managent
+                PRS-IT
               </span>
             </div>
           )}

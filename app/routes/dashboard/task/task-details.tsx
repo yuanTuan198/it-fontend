@@ -95,12 +95,12 @@ const TaskDetails = () => {
             {isUserWatching ? (
               <>
                 <EyeOff className="mr-2 size-4" />
-                Bỏ theo dõi
+                Bỏ phiếu
               </>
             ) : (
               <>
                 <Eye className="mr-2 size-4" />
-                Theo dõi
+                Nhận phiếu
               </>
             )}
           </Button>
@@ -134,7 +134,13 @@ const TaskDetails = () => {
                   }
                   className="capitalize"
                 >
-                  Ưu tiên: {task.priority}
+                  Ưu tiên: {
+                    task.priority === "High"
+                      ? "Cao"
+                      : task.priority === "Medium"
+                      ? "Trung bình"
+                      : "Thâp"
+                  }
                 </Badge>
                 <Button
                   variant="destructive"
