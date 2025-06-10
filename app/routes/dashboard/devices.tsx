@@ -49,7 +49,7 @@ const AssetManager: React.FC = () => {
   });
 
   const fetchAssets = async () => {
-    const res = await axios.get<Asset[]>('http://14.161.43.226:4000/assets');
+    const res = await axios.get<Asset[]>('http://localhost:4000/assets');
     setAssets(res.data);
   };
 
@@ -83,24 +83,24 @@ const AssetManager: React.FC = () => {
   };
 
   const addAsset = async () => {
-    const res = await axios.post('http://14.161.43.226:4000/assets', form);
+    const res = await axios.post('http://localhost:4000/assets', form);
     setAssets(prev => [...prev, res.data]);
   };
 
   const updateAsset = async () => {
     if (!editingAsset) return;
-    await axios.put(`http://14.161.43.226:4000/assets/${editingAsset._id}`, form);
+    await axios.put(`http://localhost:4000/assets/${editingAsset._id}`, form);
     fetchAssets();
   };
 
   const deleteAsset = async (id: string) => {
-    await axios.delete(`http://14.161.43.226:4000/assets/${id}`);
+    await axios.delete(`http://localhost:4000/assets/${id}`);
     setAssets(prev => prev.filter(asset => asset._id !== id));
   };
 
   const exportToExcel = () => {
     const data = filteredAssets.map(asset => ({
-      'Mã tài sản': asset.code,
+      'User đang sử dụng': asset.code,
       'Tên': asset.name,
       'Loại': asset.type,
       'Ngày nhập': asset.importDate,

@@ -58,6 +58,12 @@ export const SidebarComponent = ({
       status:false
     },
     {
+      title: "Tool Boost",
+      href: `/toolbooots`,
+      icon: CheckCircle2,
+      status:false 
+    },
+    {
       title: "Lưu trữ",
       href: `/achieved`,
       icon: CheckCircle2,

@@ -33,6 +33,7 @@ export default [
     route("my-tasks", "routes/dashboard/my-tasks.tsx"),
     route("members", "routes/dashboard/members.tsx"),
     route("devices", "routes/dashboard/devices.tsx"),
+    route("toolbooots", "routes/dashboard/toolbooots.tsx"),
   ]),
 
   route(
